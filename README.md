@@ -2,9 +2,7 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/Zoomish/go-hhru-api.svg)](https://pkg.go.dev/github.com/Zoomish/go-hhru-api)
 
-Go client for the [HeadHunter API](https://api.hh.ru/openapi/redoc): typed sub-clients generated from OpenAPI, plus a small facade (`hhru.New`) for shared headers, optional OAuth bearer injection, default query parameters, and optional retries on `429` / `503`.
-
-Package documentation and examples: [pkg.go.dev/github.com/Zoomish/go-hhru-api](https://pkg.go.dev/github.com/Zoomish/go-hhru-api).
+Go client for the [HeadHunter API](https://api.hh.ru/openapi/redoc): typed sub-clients generated from OpenAPI, plus a small facade (`hhru.New`) for shared headers, optional OAuth bearer injection, default query parameters, and optional retries on `429` / `503`. Browsable docs and `Example*` tests: use the pkg.go.dev badge above.
 
 ## Зачем эта библиотека
 

@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Live API tests moved from root into the tagged `integration` package so `go test -short ./...` stays free of HH calls.
+- Removed standalone `scripts/patch-applicant` tool (applicant `client.gen.go` patch is applied only from [`scripts/generate`](scripts/generate/main.go)).
 
 ### For maintainers
 
