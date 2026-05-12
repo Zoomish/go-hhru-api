@@ -55,3 +55,18 @@ func ExampleTokenEndpoint() {
 
 	// Output: https://api.hh.ru/token
 }
+
+func ExamplePagesUntil() {
+	ctx := context.Background()
+	sum := 0
+	_ = hhru.PagesUntil(ctx, 1, func(ctx context.Context, page int) (bool, error) {
+		sum += page
+		if page >= 3 {
+			return false, nil
+		}
+		return true, nil
+	})
+	fmt.Println(sum)
+
+	// Output: 6
+}

@@ -46,9 +46,25 @@ resp, err := c.Public.GetCountriesWithResponse(context.Background(), &public.Get
 
 ## Runnable examples (from repo root)
 
+Public reference data (no OAuth):
+
 ```bash
 go run ./examples/public_countries
+go run ./examples/public_locales
+go run ./examples/public_areas
+go run ./examples/public_industries
+go run ./examples/public_languages
+go run ./examples/public_position_suggest
+go run ./examples/public_position_suggest -text "backend engineer"
 ```
+
+Client options (`DefaultHost`, `DefaultLocale`, `MaxRetries`):
+
+```bash
+go run ./examples/custom_options
+```
+
+OAuth and tokens:
 
 ```bash
 export HH_CLIENT_ID=… HH_CLIENT_SECRET=…

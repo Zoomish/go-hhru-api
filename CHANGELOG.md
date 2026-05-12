@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [NewRefreshingTokenSource](token_refresh.go): thread-safe `TokenSource` that refreshes access tokens with `ExchangeRefreshToken` before expiry.
 - MIT [`LICENSE`](LICENSE).
-- Runnable [`examples/`](examples/) (`public_countries`, `app_token`, `refreshing_token`).
+- Runnable [`examples/`](examples/) (`public_countries`, `public_locales`, `public_areas`, `public_industries`, `public_languages`, `public_position_suggest`, `custom_options`, `app_token`, `refreshing_token`).
 - [`integration/`](integration/) live tests behind `-tags=integration`; optional [`.github/workflows/integration-tests.yml`](.github/workflows/integration-tests.yml) (`workflow_dispatch`).
 - Godoc runnable `Example*` tests in [`example_test.go`](example_test.go); [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
