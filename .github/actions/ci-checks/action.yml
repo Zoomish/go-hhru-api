@@ -4,7 +4,6 @@ description: go test, vet, regenerate gen/, and verify gen/ matches commit
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v4
     - uses: actions/setup-go@v5
       with:
         go-version-file: go.mod
