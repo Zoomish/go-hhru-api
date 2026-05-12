@@ -4,7 +4,7 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/Zoomish/go-hhru-api.svg)](https://pkg.go.dev/github.com/Zoomish/go-hhru-api)
 [![Go 1.26](https://img.shields.io/badge/Go-1.26-00ADD8?logo=go)](https://go.dev/dl/)
-[![Test](https://github.com/Zoomish/go-hhru-api/actions/workflows/test.yml/badge.svg)](https://github.com/Zoomish/go-hhru-api/actions/workflows/test.yml)
+[![CI](https://github.com/Zoomish/go-hhru-api/actions/workflows/ci.yml/badge.svg)](https://github.com/Zoomish/go-hhru-api/actions/workflows/ci.yml)
 
 Go client for the [HeadHunter API](https://api.hh.ru/openapi/redoc): typed OpenAPI sub-clients and an `hhru.New` facade for shared headers, optional OAuth bearer, default query parameters, and retries on `429` / `503`. Package docs on [pkg.go.dev](https://pkg.go.dev/github.com/Zoomish/go-hhru-api) (badge above).
 
@@ -177,3 +177,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for tests and the `integration` build tag
 ## Versioning
 
 Semantic versioning after `v1`. Until then, minors may break when `openapi.yml` or `gen/` changes. See [CHANGELOG.md](CHANGELOG.md).
+
+Publishing: pushing a `v*` tag runs [`.github/workflows/release.yml`](.github/workflows/release.yml): the same checks as [CI](.github/workflows/ci.yml) ([composite action](.github/actions/ci-checks/action.yml)), then a GitHub Release. Details in [CONTRIBUTING.md](CONTRIBUTING.md).

@@ -4,7 +4,7 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/Zoomish/go-hhru-api.svg)](https://pkg.go.dev/github.com/Zoomish/go-hhru-api)
 [![Go 1.26](https://img.shields.io/badge/Go-1.26-00ADD8?logo=go)](https://go.dev/dl/)
-[![Test](https://github.com/Zoomish/go-hhru-api/actions/workflows/test.yml/badge.svg)](https://github.com/Zoomish/go-hhru-api/actions/workflows/test.yml)
+[![CI](https://github.com/Zoomish/go-hhru-api/actions/workflows/ci.yml/badge.svg)](https://github.com/Zoomish/go-hhru-api/actions/workflows/ci.yml)
 
 Клиент на Go для [API HeadHunter](https://api.hh.ru/openapi/redoc): типизированные подклиенты из OpenAPI и фасад `hhru.New` с общими заголовками, опциональным OAuth Bearer, дефолтными query и ретраями на `429` / `503`. Документация API пакета на [pkg.go.dev](https://pkg.go.dev/github.com/Zoomish/go-hhru-api) (бейдж выше).
 
@@ -177,3 +177,5 @@ make generate
 ## Версионирование
 
 После `v1` — семантическое версионирование. До этого минорные релизы при изменении `openapi.yml` / `gen/` могут ломать совместимость. См. [CHANGELOG.md](CHANGELOG.md).
+
+Публикация: push тега `v*` запускает [`.github/workflows/release.yml`](.github/workflows/release.yml): те же проверки, что и в [CI](.github/workflows/ci.yml) ([composite action](.github/actions/ci-checks/action.yml)), затем GitHub Release. Подробности в [CONTRIBUTING.md](CONTRIBUTING.md).

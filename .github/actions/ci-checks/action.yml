@@ -1,0 +1,28 @@
+name: CI checks
+description: go test, vet, regenerate gen/, and verify gen/ matches commit
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
+        cache: true
+    - name: go test -short
+      run: go test -short ./...
+      shell: bash
+    - name: go vet
+      run: go vet ./...
+      shell: bash
+    - name: Regenerate gen/
+      run: go run ./scripts/generate .
+      shell: bash
+    - name: Check gen matches commit
+      run: |
+        if ! git diff --exit-code HEAD -- gen/; then
+          echo "::error::gen/ is out of date. Run \`make generate\`, commit gen/, push." >&2
+          git diff --stat HEAD -- gen/
+          exit 1
+        fi
+      shell: bash
