@@ -1,18 +1,18 @@
-# Security policy
+# Политика безопасности
 
-## Supported versions
+## Поддерживаемые версии
 
-Security updates are applied to the latest minor release on the default branch. Older tagged releases may not receive backports unless critical.
+Исправления по безопасности вносятся в актуальный код на ветке по умолчанию и в последний минорный релиз по ситуации. Старые тегированные версии могут не получать бэкпорты, если уязвимость не критическая.
 
-## Reporting a vulnerability
+## Сообщение об уязвимости
 
-Please report security issues **privately** so they can be addressed before public disclosure.
+Сообщайте о проблемах безопасности **в приватном порядке**, чтобы их можно было устранить до публичного раскрытия.
 
-- Use [GitHub Security Advisories](https://github.com/Zoomish/go-hhru-api/security/advisories/new) for this repository (preferred), or
-- Contact the repository maintainers through a private channel if you cannot use GitHub.
+- Предпочтительно: [GitHub Security Advisories](https://github.com/Zoomish/go-hhru-api/security/advisories/new) для этого репозитория;
+- Если GitHub недоступен — свяжитесь с мейнтейнерами репозитория по приватному каналу.
 
-Include steps to reproduce, affected versions or commit, and impact if known. Do not open a public issue for undisclosed vulnerabilities.
+Укажите шаги воспроизведения, затронутые версии или коммит, и известный ущерб. Не открывайте публичный issue по ещё не раскрытой уязвимости.
 
-## Scope
+## Область действия
 
-This policy covers the `github.com/Zoomish/go-hhru-api` module and its published code. Generated `gen/` code follows the upstream HeadHunter OpenAPI specification; report upstream API issues to HeadHunter support where appropriate.
+Политика распространяется на модуль `github.com/Zoomish/go-hhru-api` и опубликованный им код. Сгенерированный каталог `gen/` следует публичной спецификации OpenAPI HeadHunter; проблемы самого API hh.ru при необходимости направляйте в поддержку HeadHunter.
