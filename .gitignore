@@ -1,0 +1,7 @@
+openapi-generator-cli*.jar
+openapitools.json
+
+api/openapi.employer.yaml
+api/openapi.applicant.yaml
+api/openapi.public.yaml
+api/openapi.app.yaml

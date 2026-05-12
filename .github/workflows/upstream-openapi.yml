@@ -1,0 +1,40 @@
+# Weekly / manual check: committed api/openapi.yml vs HeadHunter published spec.
+#
+# URL priority:
+#   1) Repository variable HH_OPENAPI_SPEC_URL (Settings → Secrets and variables → Actions → Variables)
+#   2) Default https://api.hh.ru/openapi/specification/public
+#
+# On mismatch the job fails so you see drift in Actions; tune cron or disable if too noisy.
+
+name: Upstream OpenAPI drift check
+
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download upstream & compare
+        env:
+          SPEC_VAR: ${{ vars.HH_OPENAPI_SPEC_URL }}
+        run: |
+          set -eux
+          DEFAULT="https://api.hh.ru/openapi/specification/public"
+          if [ -n "${SPEC_VAR:-}" ]; then URL="$SPEC_VAR"; else URL="$DEFAULT"; fi
+          echo "Using URL: $URL"
+          curl -fsSL "$URL" -o /tmp/upstream-openapi.yaml
+          if cmp -s api/openapi.yml /tmp/upstream-openapi.yaml; then
+            echo "Committed api/openapi.yml matches upstream."
+            exit 0
+          fi
+          echo "::warning::api/openapi.yml differs from upstream. Download the new spec, replace api/openapi.yml, run \`make generate\`, commit."
+          diff -u api/openapi.yml /tmp/upstream-openapi.yaml | head -n 200 || true
+          exit 1

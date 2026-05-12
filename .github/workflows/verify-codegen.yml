@@ -1,0 +1,51 @@
+# Verify committed gen/ matches scripts + api/openapi.yml (canonical spec).
+#
+# Runs only when PR touches codegen-related paths (saves Actions minutes).
+# Runs heavy job only if PR has label "ci-approved" (you add it when you want CI).
+#
+# Setup:
+#   Repo → Labels → create label: ci-approved (color任意).
+#   Optional: Settings → Actions → General → Fork pull request workflows from outside
+#   collaborators → Require approval for first-time contributors (saves abuse on forks).
+#
+# If branch protection requires this check but the workflow was skipped (paths did not match),
+# enable "Require status checks to be up to date" carefully or allow skipping optional checks.
+
+name: Verify codegen
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+    paths:
+      - "api/**"
+      - "scripts/**"
+      - "Makefile"
+      - "gen/**"
+      - ".github/workflows/verify-codegen.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(join(github.event.pull_request.labels.*.name, ','), 'ci-approved'))
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Regenerate
+        run: go run ./scripts/generate .
+
+      - name: Check gen/ matches commit
+        run: |
+          if ! git diff --exit-code HEAD -- gen/; then
+            echo "::error::gen/ is out of date. Run \`make generate\`, commit gen/, push."
+            git diff --stat HEAD -- gen/
+            exit 1
+          fi
