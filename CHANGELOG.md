@@ -10,6 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - [NewRefreshingTokenSource](token_refresh.go): thread-safe `TokenSource` that refreshes access tokens with `ExchangeRefreshToken` before expiry.
+- MIT [`LICENSE`](LICENSE).
+- Runnable [`examples/`](examples/) (`public_countries`, `app_token`, `refreshing_token`).
+- [`integration/`](integration/) live tests behind `-tags=integration`; optional [`.github/workflows/integration-tests.yml`](.github/workflows/integration-tests.yml) (`workflow_dispatch`).
+- Godoc runnable `Example*` tests in [`example_test.go`](example_test.go); [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+### Changed
+
+- Live API tests moved from root into the tagged `integration` package so `go test -short ./...` stays free of HH calls.
+
+### For maintainers
+
+- After merging, create the next SemVer tag (for example `v0.2.0`) and push it so [proxy.golang.org](https://proxy.golang.org) and [pkg.go.dev](https://pkg.go.dev/github.com/Zoomish/go-hhru-api) show that release.
 
 ## [0.1.0] - 2026-05-12
 

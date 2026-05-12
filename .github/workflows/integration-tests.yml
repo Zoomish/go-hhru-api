@@ -1,0 +1,24 @@
+name: Integration tests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Live API (optional OAuth)
+        env:
+          HH_TEST_CLIENT_ID: ${{ secrets.HH_TEST_CLIENT_ID }}
+          HH_TEST_CLIENT_SECRET: ${{ secrets.HH_TEST_CLIENT_SECRET }}
+        run: go test -tags=integration -timeout 5m ./integration

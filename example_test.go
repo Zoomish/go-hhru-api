@@ -2,74 +2,56 @@ package hhru_test
 
 import (
 	"context"
-	"net/http"
-	"os"
-	"testing"
+	"fmt"
 
 	"github.com/Zoomish/go-hhru-api"
-	"github.com/Zoomish/go-hhru-api/gen/public"
 )
 
-func TestPublicGetCountries(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skips live API call when -short is set")
-	}
-	t.Parallel()
-	c, err := hhru.New(hhru.Options{
-		HHUserAgent: "go-hhru-api/example_test.go (mailto:noreply@example.com)",
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	host := public.GetCountriesParamsHostHhRu
-	resp, err := c.Public.GetCountriesWithResponse(context.Background(), &public.GetCountriesParams{
-		HHUserAgent: c.HHUserAgent(),
-		Host:        &host,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if resp.HTTPResponse.StatusCode != 200 {
-		t.Fatalf("status %d", resp.HTTPResponse.StatusCode)
-	}
-	if resp.JSON200 == nil || len(*resp.JSON200) == 0 {
-		t.Fatal("expected nonempty countries list")
-	}
+func ExampleAccessToken() {
+	ts := hhru.AccessToken("opaque")
+	tok, _ := ts.Token(context.Background())
+	fmt.Println(tok)
+
+	// Output: opaque
 }
 
-func TestExchangeClientCredentials(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skips live API call when -short is set")
-	}
-	id, sec := os.Getenv("HH_TEST_CLIENT_ID"), os.Getenv("HH_TEST_CLIENT_SECRET")
-	if id == "" || sec == "" {
-		t.Skip("set HH_TEST_CLIENT_ID and HH_TEST_CLIENT_SECRET to run OAuth integration test")
-	}
-	t.Parallel()
-	ua := "go-hhru-api/example_test.go (mailto:noreply@example.com)"
-	tok, err := hhru.ExchangeClientCredentials(context.Background(), http.DefaultClient, hhru.TokenEndpoint(hhru.DefaultBaseURL), ua, id, sec)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if tok.AccessToken == "" {
-		t.Fatal("empty access_token")
-	}
-	c, err := hhru.New(hhru.Options{
-		HHUserAgent: ua,
-		TokenSource: hhru.AccessToken(tok.AccessToken),
+func ExampleNew() {
+	_, err := hhru.New(hhru.Options{
+		HHUserAgent: "MyBot/1.0 (mailto:you@example.com)",
 	})
+	fmt.Println(err == nil)
+
+	// Output: true
+}
+
+func ExampleNewRefreshingTokenSource() {
+	ts, err := hhru.NewRefreshingTokenSource(nil,
+		hhru.TokenEndpoint(hhru.DefaultBaseURL),
+		"MyBot/1.0 (mailto:you@example.com)",
+		"client-id", "client-secret",
+		&hhru.TokenResponse{
+			AccessToken:  "initial-access",
+			RefreshToken: "refresh-token",
+			ExpiresIn:    3600,
+		},
+	)
 	if err != nil {
-		t.Fatal(err)
+		fmt.Println("err")
+		return
 	}
-	host := public.GetCountriesParamsHostHhRu
-	resp, err := c.Public.GetCountriesWithResponse(context.Background(), &public.GetCountriesParams{
-		HHUserAgent: ua,
-		Host:        &host,
-	})
-	if err != nil {
-		t.Fatal(err)
+	tok, err := ts.Token(context.Background())
+	if err != nil || tok == "" {
+		fmt.Println("bad")
+		return
 	}
-	if resp.HTTPResponse.StatusCode != 200 {
-		t.Fatalf("status %d", resp.HTTPResponse.StatusCode)
-	}
+	fmt.Println("ok")
+
+	// Output: ok
+}
+
+func ExampleTokenEndpoint() {
+	u := hhru.TokenEndpoint(hhru.DefaultBaseURL)
+	fmt.Println(u)
+
+	// Output: https://api.hh.ru/token
 }

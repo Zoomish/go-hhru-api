@@ -1,6 +1,10 @@
 # go-hhru-api
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/Zoomish/go-hhru-api.svg)](https://pkg.go.dev/github.com/Zoomish/go-hhru-api)
+
 Go client for the [HeadHunter API](https://api.hh.ru/openapi/redoc): typed sub-clients generated from OpenAPI, plus a small facade (`hhru.New`) for shared headers, optional OAuth bearer injection, default query parameters, and optional retries on `429` / `503`.
+
+Package documentation and examples: [pkg.go.dev/github.com/Zoomish/go-hhru-api](https://pkg.go.dev/github.com/Zoomish/go-hhru-api).
 
 ## Зачем эта библиотека
 
@@ -39,6 +43,25 @@ resp, err := c.Public.GetCountriesWithResponse(context.Background(), &public.Get
 ```
 
 `HH-User-Agent` is also applied via a request editor when it is missing on the outgoing request; generated methods still expect `HHUserAgent` in many `*Params` structs—use `c.HHUserAgent()` to reuse the same string.
+
+## Runnable examples (from repo root)
+
+```bash
+go run ./examples/public_countries
+```
+
+```bash
+export HH_CLIENT_ID=… HH_CLIENT_SECRET=…
+go run ./examples/app_token
+```
+
+```bash
+export HH_CLIENT_ID=… HH_CLIENT_SECRET=…
+export HH_INITIAL_TOKEN_JSON_PATH=/path/to/token.json
+go run ./examples/refreshing_token
+```
+
+`token.json` must match [`TokenResponse`](oauth.go) (`access_token`, `refresh_token`, `expires_in`) from the user OAuth redirect flow. Use `-hh-user-agent` or `HH_USER_AGENT` where supported.
 
 ## Application token (client credentials)
 
@@ -99,13 +122,13 @@ Requires Go and network for module downloads:
 make generate
 ```
 
-Source spec: [`api/openapi.yml`](api/openapi.yml). CI checks that `gen/` matches the spec (see `.github/workflows/`).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for tests and integration tags. Source spec: [`api/openapi.yml`](api/openapi.yml). CI checks that `gen/` matches the spec (see `.github/workflows/`).
 
 ## Integration tests
 
-- `go test -short ./...` — skips network.
-- Full: `go test ./...` — hits HH for `TestPublicGetCountries`.
-- OAuth: set `HH_TEST_CLIENT_ID` and `HH_TEST_CLIENT_SECRET` (from [dev.hh.ru](https://dev.hh.ru/admin)) for `TestExchangeClientCredentials`.
+- `go test -short ./...` — default CI and local quick check; no live HH calls (root [`token_refresh_test.go`](token_refresh_test.go) uses `httptest` only).
+- Live API: `go test -tags=integration -timeout 5m ./integration` — hits HH for `TestPublicGetCountries` (omit `-short`). With `HH_TEST_CLIENT_ID` and `HH_TEST_CLIENT_SECRET` from [dev.hh.ru](https://dev.hh.ru/admin), also runs `TestExchangeClientCredentials`.
+- Optional GitHub workflow: [`.github/workflows/integration-tests.yml`](.github/workflows/integration-tests.yml) (`workflow_dispatch`; configure repository secrets if you use it).
 
 ## Versioning
 
