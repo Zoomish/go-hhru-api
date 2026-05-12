@@ -8,7 +8,7 @@
 
 Клиент на Go для [API HeadHunter](https://api.hh.ru/openapi/redoc): типизированные подклиенты из OpenAPI и фасад `hhru.New` с общими заголовками, опциональным OAuth Bearer, дефолтными query и ретраями на `429` / `503`. Документация API пакета на [pkg.go.dev](https://pkg.go.dev/github.com/Zoomish/go-hhru-api) (бейдж выше).
 
-Дублируется в [`README.ru.md`](README.ru.md) для явного имени локали — поддерживайте оба файла в актуальном состоянии.
+Совпадает с корневым [`README.md`](README.md); файл для явного суффикса `.ru` — обновляйте вместе с ним.
 
 ## Содержание
 

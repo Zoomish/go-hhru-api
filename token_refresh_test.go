@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"sync/atomic"
 	"testing"
+	"time"
 )
 
 func TestRefreshingTokenSource_CachesAccessToken(t *testing.T) {
@@ -75,6 +76,58 @@ func TestRefreshingTokenSource_RefreshesWhenEmptyAccess(t *testing.T) {
 	}
 	if tok != "fresh" {
 		t.Fatalf("got %q want fresh", tok)
+	}
+	if refreshCalls.Load() != 1 {
+		t.Fatalf("refresh calls: %d", refreshCalls.Load())
+	}
+}
+
+type fakeClock struct {
+	t time.Time
+}
+
+func (f *fakeClock) Now() time.Time {
+	return f.t
+}
+
+func TestRefreshingTokenSource_WithClock_RefreshesNearExpiry(t *testing.T) {
+	var refreshCalls atomic.Int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		refreshCalls.Add(1)
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(TokenResponse{
+			AccessToken:  "new-access",
+			RefreshToken: "r2",
+			ExpiresIn:    3600,
+		})
+	}))
+	t.Cleanup(srv.Close)
+
+	start := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	fc := &fakeClock{t: start}
+	initial := &TokenResponse{
+		AccessToken:  "old-access",
+		RefreshToken: "r1",
+		ExpiresIn:    120,
+	}
+	ts, err := NewRefreshingTokenSourceWithOptions(http.DefaultClient, srv.URL, "ua", "id", "secret", initial, RefreshingSourceOptions{Clock: fc})
+	if err != nil {
+		t.Fatal(err)
+	}
+	tok1, err := ts.Token(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if tok1 != "old-access" {
+		t.Fatalf("got %q", tok1)
+	}
+	fc.t = start.Add(200 * time.Second)
+	tok2, err := ts.Token(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if tok2 != "new-access" {
+		t.Fatalf("got %q want new-access", tok2)
 	}
 	if refreshCalls.Load() != 1 {
 		t.Fatalf("refresh calls: %d", refreshCalls.Load())

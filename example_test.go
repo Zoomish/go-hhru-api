@@ -70,3 +70,10 @@ func ExamplePagesUntil() {
 
 	// Output: 6
 }
+
+func ExampleParseAPIError() {
+	e := hhru.ParseAPIError(400, []byte(`{"request_id":"rid"}`))
+	fmt.Println(e.RequestID)
+
+	// Output: rid
+}

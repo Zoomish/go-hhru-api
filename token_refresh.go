@@ -10,12 +10,17 @@ import (
 
 const refreshSkew = 90 * time.Second
 
+type RefreshingSourceOptions struct {
+	Clock Clock
+}
+
 type RefreshingTokenSource struct {
 	HTTPClient   *http.Client
 	TokenURL     string
 	HHUserAgent  string
 	ClientID     string
 	ClientSecret string
+	clock        Clock
 
 	mu           sync.Mutex
 	accessToken  string
@@ -24,6 +29,10 @@ type RefreshingTokenSource struct {
 }
 
 func NewRefreshingTokenSource(httpClient *http.Client, tokenURL, hhUserAgent, clientID, clientSecret string, initial *TokenResponse) (TokenSource, error) {
+	return NewRefreshingTokenSourceWithOptions(httpClient, tokenURL, hhUserAgent, clientID, clientSecret, initial, RefreshingSourceOptions{})
+}
+
+func NewRefreshingTokenSourceWithOptions(httpClient *http.Client, tokenURL, hhUserAgent, clientID, clientSecret string, initial *TokenResponse, opts RefreshingSourceOptions) (TokenSource, error) {
 	if initial == nil {
 		return nil, fmt.Errorf("hhru: initial token response is nil")
 	}
@@ -36,12 +45,17 @@ func NewRefreshingTokenSource(httpClient *http.Client, tokenURL, hhUserAgent, cl
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
+	clk := opts.Clock
+	if clk == nil {
+		clk = wallClock{}
+	}
 	s := &RefreshingTokenSource{
 		HTTPClient:   httpClient,
 		TokenURL:     tokenURL,
 		HHUserAgent:  hhUserAgent,
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
+		clock:        clk,
 	}
 	s.applyLocked(initial)
 	return s, nil
@@ -52,17 +66,19 @@ func (s *RefreshingTokenSource) applyLocked(out *TokenResponse) {
 	if out.RefreshToken != "" {
 		s.refreshToken = out.RefreshToken
 	}
+	now := s.clock.Now()
 	if out.ExpiresIn > 0 {
-		s.expiry = time.Now().Add(time.Duration(out.ExpiresIn) * time.Second)
+		s.expiry = now.Add(time.Duration(out.ExpiresIn) * time.Second)
 	} else {
-		s.expiry = time.Now().Add(1 * time.Hour)
+		s.expiry = now.Add(1 * time.Hour)
 	}
 }
 
 func (s *RefreshingTokenSource) Token(ctx context.Context) (string, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	if s.accessToken != "" && !time.Now().Add(refreshSkew).After(s.expiry) {
+	now := s.clock.Now()
+	if s.accessToken != "" && !now.Add(refreshSkew).After(s.expiry) {
 		return s.accessToken, nil
 	}
 	out, err := ExchangeRefreshToken(ctx, s.HTTPClient, s.TokenURL, s.HHUserAgent, s.refreshToken, s.ClientID, s.ClientSecret)

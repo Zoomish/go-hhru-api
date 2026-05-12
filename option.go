@@ -3,6 +3,7 @@ package hhru
 import (
 	"context"
 	"net/http"
+	"time"
 )
 
 type TokenSource interface {
@@ -21,6 +22,14 @@ type Options struct {
 	TokenSource TokenSource
 
 	MaxRetries int
+
+	RetryBackoffMin time.Duration
+	RetryBackoffMax time.Duration
+
+	MaxRequestsPerSecond float64
+
+	RequestHook  func(ctx context.Context, req *http.Request) error
+	ResponseHook func(ctx context.Context, resp *http.Response)
 }
 
 type staticToken string

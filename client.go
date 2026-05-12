@@ -37,13 +37,13 @@ func New(opts Options) (*Client, error) {
 	if hc == nil {
 		hc = http.DefaultClient
 	}
-	if opts.MaxRetries > 0 {
-		t := hc.Transport
-		if t == nil {
-			t = http.DefaultTransport
+	if opts.MaxRetries > 0 || opts.MaxRequestsPerSecond > 0 || opts.ResponseHook != nil {
+		base := hc.Transport
+		if base == nil {
+			base = http.DefaultTransport
 		}
 		hc = &http.Client{
-			Transport:     wrapRetryTransport(t, opts.MaxRetries),
+			Transport:     chainRoundTripper(base, opts),
 			Timeout:       hc.Timeout,
 			CheckRedirect: hc.CheckRedirect,
 			Jar:           hc.Jar,

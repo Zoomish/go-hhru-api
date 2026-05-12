@@ -14,11 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runnable [`examples/`](examples/) (`public_countries`, `public_locales`, `public_areas`, `public_industries`, `public_languages`, `public_position_suggest`, `custom_options`, `app_token`, `refreshing_token`).
 - [`integration/`](integration/) live tests behind `-tags=integration`; optional [`.github/workflows/integration-tests.yml`](.github/workflows/integration-tests.yml) (`workflow_dispatch`).
 - Godoc runnable `Example*` tests in [`example_test.go`](example_test.go); [`CONTRIBUTING.md`](CONTRIBUTING.md).
+- Repository docs: Russian [`README.md`](README.md) / [`README.ru.md`](README.ru.md) and English [`README.en.md`](README.en.md); TOC; CI badge via [`.github/workflows/test.yml`](.github/workflows/test.yml).
+- [`SECURITY.md`](SECURITY.md); [Dependabot](.github/dependabot.yml) for Go modules.
+- [`ParseAPIError`](api_error.go) / [`APIError`](api_error.go) for typical HH JSON errors with `request_id`.
+- [`Options`](option.go): [`RequestHook`](option.go), [`ResponseHook`](option.go), [`MaxRequestsPerSecond`](option.go), [`RetryBackoffMin`](option.go) / [`RetryBackoffMax`](option.go) for transport pacing and retry backoff clamping.
+- [`Clock`](clock.go) and [`NewRefreshingTokenSourceWithOptions`](token_refresh.go) with [`RefreshingSourceOptions`](token_refresh.go) for testable token refresh timing.
 
 ### Changed
 
 - Live API tests moved from root into the tagged `integration` package so `go test -short ./...` stays free of HH calls.
 - Removed standalone `scripts/patch-applicant` tool (applicant `client.gen.go` patch is applied only from [`scripts/generate`](scripts/generate/main.go)).
+- [`New`](client.go) composes optional pacing, response hooks, and retries on the HTTP transport when those options are set.
 
 ### For maintainers
 
