@@ -1,7 +1,9 @@
 # go-hhru-api
 
+
 **Русский** | [English](README.en.md)
 
+[![Status](https://goreportcard.com/badge/github.com/Zoomish/go-hhru-api)](https://goreportcard.com/badge/github.com/Zoomish/go-hhru-api)
 [![Go Reference](https://pkg.go.dev/badge/github.com/Zoomish/go-hhru-api.svg)](https://pkg.go.dev/github.com/Zoomish/go-hhru-api)
 [![Go 1.26](https://img.shields.io/badge/Go-1.26-00ADD8?logo=go)](https://go.dev/dl/)
 [![CI](https://github.com/Zoomish/go-hhru-api/actions/workflows/ci.yml/badge.svg)](https://github.com/Zoomish/go-hhru-api/actions/workflows/ci.yml)
