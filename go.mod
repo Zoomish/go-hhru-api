@@ -3,7 +3,7 @@ module github.com/Zoomish/go-hhru-api
 go 1.26.1
 
 require (
-	github.com/oapi-codegen/runtime v1.4.0
+	github.com/oapi-codegen/runtime v1.4.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
